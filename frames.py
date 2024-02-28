@@ -1,6 +1,8 @@
 import tkinter
-from PIL import ImageTk
-from PIL import Image
+from PIL import ImageTk, Image
+import cv2 as cv
+import numpy as np
+import imutils
 
 class Frames:
     xAxis = 0
@@ -10,10 +12,13 @@ class Frames:
     winFrame = object()
     btnClose = object()
     btnView = object()
+    btnBack = object()  # New Back button
     image = object()
     method = object()
     callingObj = object()
     labelImg = 0
+    # currentImageIndex = 0
+    # imageNames = ["Original MRI Scan", "Binary Image", "Grayscale ROI"]
 
     def __init__(self, mainObj, MainWin, wWidth, wHeight, function, Object, xAxis=10, yAxis=10):
         self.xAxis = xAxis
@@ -27,44 +32,36 @@ class Frames:
         if (function != 0):
             self.method = function
 
-        global winFrame
         self.winFrame = tkinter.Frame(self.MainWindow, width=wWidth, height=wHeight)
         self.winFrame['borderwidth'] = 5
         self.winFrame['relief'] = 'ridge'
         self.winFrame.place(x=xAxis, y=yAxis)
 
-        self.btnClose = tkinter.Button(self.winFrame, text="Close", width=8,
+        self.btnClose = tkinter.Button(self.winFrame, text="Close", width=50, height=4,
                                       command=lambda: self.quitProgram(self.MainWindow))
-        self.btnClose.place(x=1020, y=600)
-        self.btnView = tkinter.Button(self.winFrame, text="View", width=8, command=lambda: self.NextWindow(self.method))
-        self.btnView.place(x=900, y=600)
-
+        self.btnClose.place(x=690, y=440)
+        self.btnView = tkinter.Button(self.winFrame, text="View", width=50, height=4, command=lambda: self.NextWindow(self.method))
+        self.btnView.place(x=690, y=320)
+        # self.btnBack = tkinter.Button(self.winFrame, text="Back", width=50, height=4, command=self.Back)  # New Back button
+        # self.btnBack.place(x=690, y=390)  # New Back button
 
     def setCallObject(self, obj):
         self.callingObj = obj
 
-
     def setMethod(self, function):
         self.method = function
 
-
     def quitProgram(self, window):
-        global MainWindow
         self.MainWindow.destroy()
 
-
     def getFrames(self):
-        global winFrame
         return self.winFrame
-
 
     def unhide(self):
         self.winFrame.place(x=self.xAxis, y=self.yAxis)
 
-
     def hide(self):
         self.winFrame.place_forget()
-
 
     def NextWindow(self, methodToExecute):
         listWF = list(self.MainObj.listOfWinFrame)
@@ -100,19 +97,28 @@ class Frames:
 
         print("Step " + str(current) + " Extraction complete!")
 
+    # def Back(self):
+    #     self.currentImageIndex = max(0, self.currentImageIndex - 1)
+
+    #     image_name_label = tkinter.Label(self.winFrame, text=self.imageNames[self.currentImageIndex], height=1, width=20)
+    #     image_name_label.place(x=700, y=400)
+
+    #     self.displayImage()
 
     def removeComponent(self):
         self.btnClose.destroy()
         self.btnView.destroy()
-
+        self.btnBack.destroy()
 
     def readImage(self, img):
         self.image = img
 
-
+    #positioning of image on tkinter panel
     def displayImage(self):
-        imgTk = self.image.resize((250, 250), Image.ANTIALIAS)
+        imgTk = self.image.resize((420, 420), Image.ANTIALIAS)
         imgTk = ImageTk.PhotoImage(image=imgTk)
         self.image = imgTk
         self.labelImg = tkinter.Label(self.winFrame, image=self.image)
-        self.labelImg.place(x=700, y=150)
+        self.labelImg.place(x=80, y=140)
+
+

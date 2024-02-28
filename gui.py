@@ -6,12 +6,10 @@ from frames import *
 from displayTumor import *
 from predictTumor import *
 
-
 class Gui:
     MainWindow = 0
     listOfWinFrame = list()
     FirstFrame = object()
-    val = 0
     fileName = 0
     DT = object()
 
@@ -26,9 +24,7 @@ class Gui:
 
         self.DT = DisplayTumor()
 
-        self.fileName = tkinter.StringVar()
-
-        self.FirstFrame = Frames(self, MainWindow, self.wWidth, self.wHeight, 0, 0)
+        self.FirstFrame = Frames(self, MainWindow, self.wWidth, self.wHeight, 50, 0)
         self.FirstFrame.btnView['state'] = 'disable'
 
         self.listOfWinFrame.append(self.FirstFrame)
@@ -37,16 +33,14 @@ class Gui:
         WindowLabel.place(x=320, y=30)
         WindowLabel.configure(background="White", font=("Comic Sans MS", 16, "bold"))
 
-        self.val = tkinter.IntVar()
-        RB1 = tkinter.Radiobutton(self.FirstFrame.getFrames(), text="Detect Tumor", variable=self.val,
-                                  value=1, command=self.check)
-        RB1.place(x=250, y=200)
-        RB2 = tkinter.Radiobutton(self.FirstFrame.getFrames(), text="View Tumor Region",
-                                  variable=self.val, value=2, command=self.check)
-        RB2.place(x=250, y=250)
+        browseBtn = tkinter.Button(self.FirstFrame.getFrames(), text="Browse", width=50, height=4, command=self.browseWindow)
+        browseBtn.place(x=690, y=200)
 
-        browseBtn = tkinter.Button(self.FirstFrame.getFrames(), text="Browse", width=8, command=self.browseWindow)
-        browseBtn.place(x=800, y=550)
+        detectBtn = tkinter.Button(self.FirstFrame.getFrames(), text="Detect Tumor", width=20, height=2, command=lambda: self.check(1))
+        detectBtn.place(x=120, y=630)
+
+        viewBtn = tkinter.Button(self.FirstFrame.getFrames(), text="View Tumor Region", width=20, height=2, command=lambda: self.check(2))
+        viewBtn.place(x=320, y=630)
 
         MainWindow.mainloop()
 
@@ -65,10 +59,10 @@ class Gui:
         self.listOfWinFrame[0].displayImage()
         self.DT.readImage(image)
 
-    def check(self):
+    def check(self, option):
         global mriImage
         #print(mriImage)
-        if (self.val.get() == 1):
+        if option == 1:
             self.listOfWinFrame = 0
             self.listOfWinFrame = list()
             self.listOfWinFrame.append(self.FirstFrame)
@@ -84,9 +78,9 @@ class Gui:
                 resLabel = tkinter.Label(self.FirstFrame.getFrames(), text="No Tumor", height=1, width=20)
                 resLabel.configure(background="White", font=("Comic Sans MS", 16, "bold"), fg="green")
 
-            resLabel.place(x=700, y=450)
+            resLabel.place(x=150, y=150+420+15)
 
-        elif (self.val.get() == 2):
+        elif option == 2:
             self.listOfWinFrame = 0
             self.listOfWinFrame = list()
             self.listOfWinFrame.append(self.FirstFrame)
@@ -97,15 +91,13 @@ class Gui:
 
             self.listOfWinFrame.append(secFrame)
 
-
             for i in range(len(self.listOfWinFrame)):
-                if (i != 0):
+                if i != 0:
                     self.listOfWinFrame[i].hide()
             self.listOfWinFrame[0].unhide()
 
-            if (len(self.listOfWinFrame) > 1):
+            if len(self.listOfWinFrame) > 1:
                 self.listOfWinFrame[0].btnView['state'] = 'active'
-
         else:
             print("Not Working")
 
